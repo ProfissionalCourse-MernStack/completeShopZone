@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const {
   getAllUsers,
   registerUser,
@@ -7,16 +8,21 @@ const {
   deleteUser,
 } = require("../controllers/user.controller");
 
-// Get all users
-router.get("/", getAllUsers);
+const {
+  verifyToken, // Check if user is logged in
+  allowOnlyAdmin, // Check if user is an admin
+} = require("../middleWares/authMiddleware");
 
-// Register a new user
+// ✅ Get all users (admin only)
+router.get("/", verifyToken, allowOnlyAdmin, getAllUsers);
+
+// ✅ Register a new user (open to everyone)
 router.post("/register", registerUser);
 
-// Update user by ID
-router.put("/:id", updateUser);
+// ✅ Update user by ID (admin only)
+router.put("/:id", verifyToken, allowOnlyAdmin, updateUser);
 
-// Delete user by ID
-router.delete("/:id", deleteUser);
+// ✅ Delete user by ID (admin only)
+router.delete("/:id", verifyToken, allowOnlyAdmin, deleteUser);
 
 module.exports = router;
