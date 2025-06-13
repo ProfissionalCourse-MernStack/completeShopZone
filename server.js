@@ -8,6 +8,8 @@ const userRoutes = require("./Routes/userRoutes");
 const authRoutes = require("./Routes/auth.route");
 const products = require("./Routes/product");
 const categoryRoutes = require("./Routes/category");
+const orderItemRoutes = require("./Routes/OrderItem");
+
 
 // 2. Load .env Variables
 dotenv.config();
@@ -22,10 +24,11 @@ const app = express();
 app.use(express.json());
 
 // 6. Routes
-app.use("/api/users", userRoutes); // For admin to manage users
-app.use("/api/auth", authRoutes); // For login & register
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/products", products);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/order-items", orderItemRoutes); // ✅ Register here
 
 // 7. Basic Test Route
 app.get("/", (req, res) => {
