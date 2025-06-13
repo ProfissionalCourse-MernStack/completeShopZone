@@ -20,13 +20,13 @@ router.post("/", verifyToken, allowOnlyAdmin, createProduct);
 // ✅ Get all products (public)
 router.get("/", getAllProducts);
 
-// ✅ Get single product (public)
+// ✅ Get one product
 router.get("/:id", getProductById);
 
-// ✅ Update product (admin only)
+// ✅ Update (admin only)
 router.put("/:id", verifyToken, allowOnlyAdmin, updateProduct);
 
-// ✅ Delete product (admin only)
+// ✅ Delete (admin only)
 router.delete("/:id", verifyToken, allowOnlyAdmin, deleteProduct);
 
 module.exports = router;

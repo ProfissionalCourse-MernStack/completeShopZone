@@ -35,7 +35,16 @@ const allowOnlyAdmin = (req, res, next) => {
   }
 };
 
+const allowOnlyUser = (req, res, next) => {
+  if (req.user && req.user.role === "user") {
+    next();
+  } else {
+    res.status(403).json({ message: "Access denied. Users only." });
+  }
+};
+
 module.exports = {
   verifyToken,
+   allowOnlyUser,// ✅ export it
   allowOnlyAdmin,
 };
