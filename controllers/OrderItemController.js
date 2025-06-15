@@ -1,5 +1,5 @@
 const OrderItem = require("../models/OrderItem");
-const Product = require("../models/Product");
+const Product = require("../models/product");
 
 // Create OrderItem
 const createOrderItem = async (req, res) => {
@@ -7,7 +7,8 @@ const createOrderItem = async (req, res) => {
     const { product, quantity } = req.body;
 
     const productData = await Product.findById(product);
-    if (!productData) return res.status(404).json({ message: "Product not found" });
+    if (!productData)
+      return res.status(404).json({ message: "Product not found" });
 
     const price = productData.price;
     const orderItem = await OrderItem.create({ product, quantity, price });
@@ -31,8 +32,11 @@ const getAllOrderItems = async (req, res) => {
 // Get single OrderItem
 const getOrderItemById = async (req, res) => {
   try {
-    const orderItem = await OrderItem.findById(req.params.id).populate("product");
-    if (!orderItem) return res.status(404).json({ message: "Order item not found" });
+    const orderItem = await OrderItem.findById(req.params.id).populate(
+      "product"
+    );
+    if (!orderItem)
+      return res.status(404).json({ message: "Order item not found" });
     res.json(orderItem);
   } catch (error) {
     res.status(500).json({ message: error.message });

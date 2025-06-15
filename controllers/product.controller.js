@@ -1,5 +1,4 @@
-
-const Product = require("../models/Product");
+const Product = require("../models/product");
 
 // ✅ Create new product (auto increase stock if exists)
 const createProduct = async (req, res) => {
@@ -27,7 +26,6 @@ const createProduct = async (req, res) => {
 
     await product.save();
     res.status(201).json(product);
-
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
