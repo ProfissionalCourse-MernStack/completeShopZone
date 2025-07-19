@@ -1,3 +1,4 @@
+const Product = require("../models/product"); // Adjust the path if needed
 const Order = require("../models/order");
 
 // ✅ Create Order (user)

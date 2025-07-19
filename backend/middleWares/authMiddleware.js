@@ -45,6 +45,6 @@ const allowOnlyUser = (req, res, next) => {
 
 module.exports = {
   verifyToken,
-   allowOnlyUser,// ✅ export it
+  allowOnlyUser, // ✅ export it
   allowOnlyAdmin,
 };

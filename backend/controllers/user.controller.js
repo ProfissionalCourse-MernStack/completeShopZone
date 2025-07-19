@@ -81,9 +81,37 @@ const deleteUser = async (req, res) => {
   }
 };
 
+// GET user statistics
+const getUserStats = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const adminCount = await User.countDocuments({ role: "admin" });
+    const userCount = await User.countDocuments({ role: "user" });
+    const adminPercentage = totalUsers ? Math.round((adminCount / totalUsers) * 100) : 0;
+    const userPercentage = totalUsers ? Math.round((userCount / totalUsers) * 100) : 0;
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const recentUsers = await User.countDocuments({ createdAt: { $gte: sevenDaysAgo } });
+
+    res.json({
+      data: {
+        totalUsers,
+        adminCount,
+        adminPercentage,
+        userCount,
+        userPercentage,
+        recentUsers,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   getAllUsers,
   registerUser,
   updateUser,
   deleteUser,
+  getUserStats,
 };

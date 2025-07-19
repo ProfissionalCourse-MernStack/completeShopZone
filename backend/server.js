@@ -2,6 +2,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
+const cors = require("cors");
 
 // Import Routes
 const userRoutes = require("./Routes/userRoutes");
@@ -20,6 +21,11 @@ connectDB();
 
 // 4. Initialize Express App
 const app = express();
+app.use(
+  cors({
+    origin: "*", // Allow all origins
+  })
+); // Enable CORS for all routes
 
 // 5. Middleware to parse JSON
 app.use(express.json());
