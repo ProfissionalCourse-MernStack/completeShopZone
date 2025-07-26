@@ -2,11 +2,54 @@ const User = require("../models/userModel");
 const generateToken = require("../utils/generateToken");
 const bcrypt = require("bcryptjs");
 
-// GET all users
+// GET all users with search and pagination support
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
-    res.json(users);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+    
+    let query = {};
+    if (search) {
+      // Search in name, email, and role fields
+      query = {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { email: { $regex: search, $options: 'i' } },
+          { role: { $regex: search, $options: 'i' } }
+        ]
+      };
+    }
+    
+    // Calculate skip value for pagination
+    const skip = (page - 1) * limit;
+    
+    // Get total count for pagination
+    const total = await User.countDocuments(query);
+    
+    // Get users with pagination and search
+    const users = await User.find(query)
+      .select('-password')
+      .skip(skip)
+      .limit(limit);
+    
+    // Calculate pagination info
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
+    
+    res.json({
+      docs: users,
+      totalDocs: total,
+      limit: limit,
+      totalPages: totalPages,
+      page: page,
+      pagingCounter: skip + 1,
+      hasPrevPage: hasPrevPage,
+      hasNextPage: hasNextPage,
+      prevPage: hasPrevPage ? page - 1 : null,
+      nextPage: hasNextPage ? page + 1 : null
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -38,16 +81,33 @@ const registerUser = async (req, res) => {
     // Generate JWT token
     const token = generateToken(user._id);
 
-    // Return user and token
+    // Return user and token in expected format
     res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
+      message: "Registration successful",
       token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profilePicture: user.profilePicture,
+      },
     });
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+};
+
+// GET - Get user profile
+const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -111,6 +171,7 @@ const getUserStats = async (req, res) => {
 module.exports = {
   getAllUsers,
   registerUser,
+  getUserProfile,
   updateUser,
   deleteUser,
   getUserStats,

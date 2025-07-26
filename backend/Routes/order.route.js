@@ -4,6 +4,7 @@ const {
   createOrder,
   getAllOrders,
   getOrderById,
+  getUserOrders,
 } = require("../controllers/order.controller");
 
 const {
@@ -18,7 +19,10 @@ router.post("/", verifyToken, allowOnlyUser, createOrder);
 // ✅ Get all orders (admin)
 router.get("/", verifyToken, allowOnlyAdmin, getAllOrders);
 
-// ✅ Get one order (user/admin)
+// ✅ Get user's orders (authenticated user) - MUST come before /:id route
+router.get("/user/orders", verifyToken, getUserOrders);
+
+// ✅ Get one order (user/admin) - MUST come after specific routes
 router.get("/:id", verifyToken, getOrderById);
 
 module.exports = router;

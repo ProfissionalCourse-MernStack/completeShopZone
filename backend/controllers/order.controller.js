@@ -70,8 +70,22 @@ const getOrderById = async (req, res) => {
   }
 };
 
+// ✅ Get user's orders (for authenticated user)
+const getUserOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user._id })
+      .populate("products.product", "name price category")
+      .sort({ createdAt: -1 }); // Most recent first
+
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = {
   createOrder,
   getAllOrders,
   getOrderById,
+  getUserOrders,
 };

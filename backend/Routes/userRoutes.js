@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   getAllUsers,
   registerUser,
+  getUserProfile,
   updateUser,
   deleteUser,
   getUserStats, // <-- add this
@@ -19,6 +20,9 @@ router.get("/", verifyToken, allowOnlyAdmin, getAllUsers);
 
 // ✅ Register a new user (open to everyone)
 router.post("/register", registerUser);
+
+// ✅ Get user profile (authenticated user)
+router.get("/profile", verifyToken, getUserProfile);
 
 // ✅ Update user by ID (admin only)
 router.put("/:id", verifyToken, allowOnlyAdmin, updateUser);
